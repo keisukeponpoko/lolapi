@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSummonerTable extends Migration
+class CreateSummonersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,9 @@ class CreateSummonerTable extends Migration
     public function up()
     {
         Schema::create('summoners', function (Blueprint $table) {
-            $table->integer('id')->unsigned();
-            $table->string('name')->unique();
+            $table->increments('id');
+            $table->integer('summoner_id')->unsigned();
+            $table->string('name');
             $table->timestamps();
         });
     }

@@ -3,53 +3,64 @@
 namespace App\Http\Controllers;
 
 use App\Models\Summoner;
+use App\Models\Champion;
+use App\Logics\Riot;
 
 class IndexController extends Controller
 {
-    public function __construct(Summoner $summoner)
+    public function __construct(Summoner $summoner, Champion $champion, Riot $riot)
     {
-        $key = env('RIOT_API_KEY');
-        $this->uri = 'https://jp.api.pvp.net/api/lol/jp/%s/?api_key='.$key;
-
         $this->summoner = $summoner;
+        $this->champion = $champion;
+        $this->riot = $riot;
     }
 
     public function index()
     {
-        $name = 'pokopok';
-        $id = $this->getSummoner($name);
+        $name = 'Oltona';
+        $id = $this->getSummonerId($name);
 
         if ($id === false) {
             return view('errors/503');
         }
-
-        //$url = sprintf($this->uri, 'v2.2/matchlist/by-summoner/'.$id);
-        $url = sprintf($this->uri, 'v1.3/game/by-summoner/'.$id.'/recent');
-        $response = json_decode(\Curl::to($url)->get());
-
+        $response = $this->riot->getMatchLists($id);
         dd($response);
+
+        $summoners = $this->riot->getCurrentSummoners($id);
+        foreach ($summoners as $summoner) {
+            $id = $summoner->summonerId;
+            $response = $this->riot->getMatchLists($id);
+            dd($response);
+        }
     }
     
-    public function getSummoner($name)
+    public function getSummonerId($name)
     {
-        $summoner = $this->summoner->select('id')->where('name', $name)->first();
-        
+        $summoner = $this->summoner->select('summoner_id')->where('name', $name)->first();
+
         if ($summoner) {
-            return $summoner->id;
+            return $summoner->summoner_id;
         }
 
-        $url = sprintf($this->uri, 'v1.4/summoner/by-name/'.$name);
-        $response = json_decode(\Curl::to($url)->get());
+        $response = $this->riot->getSummonerId($name);
 
         if ($response === null) {
             return false;
         }
 
-        $id = $response->{$name}->id;
-
-        $this->summoner->id = $id;
-        $this->summoner->name = $name;
-        $this->summoner->save();
+        $id = $response->{strtolower($name)}->id;
+        $this->summoner->create([
+            'summoner_id' => $id,
+            'name' => $name
+        ]);
         return $id;
+    }
+    
+    public function getAllChampion() {
+        $this->champion->whereNotNull('id')->delete();
+
+        $response = $this->riot->getChampions();
+
+        $this->champion->insertChampion($response->data);
     }
 }
