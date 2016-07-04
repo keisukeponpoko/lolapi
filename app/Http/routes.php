@@ -13,4 +13,6 @@
 
 Route::get('/', 'IndexController@index');
 
-Route::get('/champion', 'IndexController@getAllChampion');
+Route::get('/champion', 'IndexController@champion');
+
+Route::get('/champion/get', 'IndexController@getAllChampion');

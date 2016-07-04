@@ -17,21 +17,31 @@ class IndexController extends Controller
 
     public function index()
     {
-        $name = 'Oltona';
+        $name = 'pokopok';
         $id = $this->getSummonerId($name);
 
         if ($id === false) {
             return view('errors/503');
         }
         $response = $this->riot->getMatchLists($id);
+        //今までのrankマッチの対戦成績を取得。知りたいこと、得意ロール、使用チャンプ
         dd($response);
 
+        //対戦相手一覧を取得
         $summoners = $this->riot->getCurrentSummoners($id);
         foreach ($summoners as $summoner) {
-            $id = $summoner->summonerId;
-            $response = $this->riot->getMatchLists($id);
+            //対戦相手の履歴を取得
+            $response = $this->riot->getMatchLists($summoner->summonerId);
             dd($response);
         }
+    }
+
+    public function champion()
+    {
+        $champions = $this->champion->get();
+
+        return view('champion')
+            ->with('champions', $champions);
     }
     
     public function getSummonerId($name)

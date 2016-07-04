@@ -19,10 +19,10 @@ class Champion extends Model
                 'enemytips' =>  implode(' ', $champ->enemytips),
                 'blurb' =>  $champ->blurb,
                 'passive' =>  $champ->passive->sanitizedDescription,
-                'spells_q' =>  $this->getSpellTooltip($champ->spells[0]),
-                'spells_w' =>  $this->getSpellTooltip($champ->spells[1]),
-                'spells_e' =>  $this->getSpellTooltip($champ->spells[2]),
-                'spells_r' =>  $this->getSpellTooltip($champ->spells[3])
+                'spells_q' =>  $champ->spells[0]->sanitizedDescription,
+                'spells_w' =>  $champ->spells[1]->sanitizedDescription,
+                'spells_e' =>  $champ->spells[2]->sanitizedDescription,
+                'spells_r' =>  $champ->spells[3]->sanitizedDescription
             ]);
         }
     }
@@ -36,7 +36,7 @@ class Champion extends Model
         $replace = [];
         foreach ($matchE[1] as $key => $value) {
             if (isset($replace[$matchE[0][$key]]) === false) {
-                $replace[$matchE[0][$key]] = implode('/', $spell->effect[$value]);
+                $replace[$matchE[0][$key]] = $spell->effectBurn[$value];
             }
         }
 
