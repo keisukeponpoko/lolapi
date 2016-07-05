@@ -12,13 +12,6 @@
 <body>
 @include('header')
 <div class="container">
-    @if (Session::has('flash_message'))
-        <div class="alert alert-success">{{ Session::get('flash_message') }}</div>
-    @endif
-    @if ($errors->all())
-        <div class="alert alert-danger">{{ $errors->all()[0] }}</div>
-    @endif
-
     @yield('content')
 </div>
 </body>

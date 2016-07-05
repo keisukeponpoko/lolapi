@@ -7,7 +7,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">LOL API</a>
+            <a class="navbar-brand" href="/search">Summoner Search</a>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">

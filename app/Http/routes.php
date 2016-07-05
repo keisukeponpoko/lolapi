@@ -11,8 +11,14 @@
 |
 */
 
+Route::get('search', 'IndexController@getSearch');
+Route::post('search', 'IndexController@postSearch');
+
+
 Route::get('/', 'IndexController@index');
 
-Route::get('/champion', 'IndexController@champion');
+Route::get('personal', 'IndexController@personal');
 
-Route::get('/champion/get', 'IndexController@getAllChampion');
+Route::get('champion', 'IndexController@champion');
+
+Route::get('champion/get', 'IndexController@getAllChampion');
