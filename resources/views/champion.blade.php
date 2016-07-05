@@ -2,8 +2,19 @@
 @section('head')
     @parent
     <style>
+        .table {
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+        .table-striped>tbody>tr>td .table-striped>tbody>tr>th {
+            width: 13%;
+        }
+        .name {
+            width: 9% !important;
+        }
         .scroll {
             height: 200px;
+            width: 100%;
             overflow-x:scroll;
         }
     </style>
@@ -13,20 +24,20 @@
 <table class="table table-striped">
     <thead>
     <tr>
-        <th>名前</th>
-        <th>仲間時</th>
-        <th>敵時</th>
-        <th>パッシブ</th>
-        <th>Q</th>
-        <th>W</th>
-        <th>E</th>
-        <th>R</th>
+        <th class="name">champ</th>
+        <th>allytips</th>
+        <th>enemytips</th>
+        <th>passive</th>
+        <th>Qspell</th>
+        <th>Wspell</th>
+        <th>Espell</th>
+        <th>Rspell</th>
     </tr>
     </thead>
     <tbody>
     @foreach($champions as $champion)
         <tr>
-            <td><div class="scroll">{{ $champion->name }}</div></td>
+            <td class="name"><div class="scroll">{{ $champion->name }}</div></td>
             <td><div class="scroll">{{ $champion->allytips }}</div></td>
             <td><div class="scroll">{{ $champion->enemytips }}</div></td>
             <td><div class="scroll">{{ $champion->passive }}</div></td>

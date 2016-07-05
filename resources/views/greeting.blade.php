@@ -1,0 +1,10 @@
+@extends("base")
+@section('head')
+    @parent
+@endsection
+@section("content")
+    <h1>あいさつ</h1>
+    <p>何か要望あったら教えてください！</p>
+@endsection
+@section("footer")
+@endsection

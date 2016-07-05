@@ -78,6 +78,27 @@ class Riot
         return $data;
     }
 
+    public function getCurrentMatch($id)
+    {
+        $response = $this->curlCurrentSummoners($id);
+
+        if ($response === null) {
+            return false;
+        }
+        $data = [];
+        foreach ($response->participants as $player) {
+            $exist = $this->summoner->where('summoner_id', $player->summonerId)->exists();
+            if ($exist === false) {
+                $this->summoner->create([
+                    'summoner_id' => $player->summonerId,
+                    'name' => $player->summonerName
+                ]);
+            }
+            $data[$player->teamId][$player->summonerId] = $player->championId;
+        }
+        return $data;
+    }
+
     public function curlSummonerId($name)
     {
         $url = sprintf($this->uri, 'api/lol/jp/v1.4/summoner/by-name/'.$name);
@@ -96,13 +117,7 @@ class Riot
             $this->uri,
             'observer-mode/rest/consumer/getSpectatorGameInfo/JP1/'.$id
         );
-        $response = json_decode(Curl::to($url)->get());
-
-        if (isset($resoponse)) {
-            return $response->participants;
-        } else {
-            return false;
-        }
+        return json_decode(Curl::to($url)->get());
     }
 
     public function curlMatchLists($id)

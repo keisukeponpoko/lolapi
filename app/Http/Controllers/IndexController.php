@@ -21,25 +21,26 @@ class IndexController extends Controller
 
         $stats = [];
         //対戦相手一覧を取得
-        $summoners = $this->riot->curlCurrentSummoners($id);
+        $match = $this->riot->getCurrentMatch($id);
 
-        if ($summoners === false) {
-            return redirect('personal')->with('id', $id);
+        if ($match === false) {
+            return redirect('stats');
         }
 
-        foreach ($summoners as $summoner) {
-            dd($summoner);
-            //今までのrankマッチの対戦成績を取得。
-            $stats[$id] = $this->riot->getMatchStats($id);
+        $summonerIds = array_merge(array_keys($match[100]), array_keys($match[200]));
+        $championIds = array_merge($match[100], $match[200]);
+
+        $summoners = $this->summoner->select('summoner_id', 'name')
+            ->whereIn('summoner_id', $summonerIds)
+            ->lists('name', 'summoner_id');
+        $champions = $this->champion->whereIn('champion_id', $championIds)->get();
+        foreach ($champions as $value) {
+            $champion[$value->champion_Id] = $value;
         }
 
-        $summoners = $this->summoner->select('summoner_id', 'name')->lists('name', 'summoner_id')->toArray();
-        $champions = $this->champion->select('champion_id', 'name')->lists('name', 'champion_id')->toArray();
-        $champions[0] = '合計';
-
-        return view('stats')
-            ->with('stats', $stats)
-            ->with('champions', $champions)
+        return view('match')
+            ->with('match', $match)
+            ->with('champions', $champion)
             ->with('summoners', $summoners);
     }
 
@@ -64,9 +65,11 @@ class IndexController extends Controller
         return redirect('/')->withCookie($cookie);
     }
 
-    public function personal()
+    public function stats($id = '')
     {
-        $id = request()->cookie('id');
+        if (empty($id)) {
+            $id = request()->cookie('id');
+        }
         $stats = $this->riot->getMatchStats($id);
 
         $summoners = $this->summoner->select('summoner_id', 'name')->lists('name', 'summoner_id')->toArray();

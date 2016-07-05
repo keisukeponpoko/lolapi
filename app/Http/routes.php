@@ -11,13 +11,17 @@
 |
 */
 
+Route::get('/greeting', function () {
+    return view('greeting');
+});
 Route::get('search', 'IndexController@getSearch');
 Route::post('search', 'IndexController@postSearch');
 
+Route::group(['middleware' => ['summoner']], function () {
+    Route::get('/', 'IndexController@index');
 
-Route::get('/', 'IndexController@index');
-
-Route::get('personal', 'IndexController@personal');
+    Route::get('stats/{id?}', 'IndexController@stats');
+});
 
 Route::get('champion', 'IndexController@champion');
 
