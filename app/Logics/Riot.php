@@ -39,6 +39,9 @@ class Riot
     public function getMatchStats($id)
     {
         $response = $this->curlMatchLists($id);
+        if ($response === null) {
+            return false;
+        }
 
         $data = [];
         $data[0]['TOP'] = 0;
@@ -57,6 +60,10 @@ class Riot
         }
 
         $response = $this->curlStaticRanked($id);
+        if ($response === null) {
+            return false;
+        }
+
         foreach ($response->champions as $static) {
             $stats = $static->stats;
             $data[$static->id]['CHAMP'] = $static->id;
@@ -134,7 +141,7 @@ class Riot
 
     public function curlStaticRanked($id)
     {
-        $url = sprintf($this->uri, 'api/lol/jp/v1.3/stats/by-summoner/'.$id.'/ranked');
+        $url = sprintf($this->uri, 'api/lol/jp/v1.3/stats/by-summoner/' . $id . '/ranked');
         return json_decode(Curl::to($url)->get());
     }
 }

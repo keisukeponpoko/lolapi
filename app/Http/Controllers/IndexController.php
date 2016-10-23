@@ -26,6 +26,8 @@ class IndexController extends Controller
         if ($match === false) {
             return redirect('stats');
         }
+        //tier 取得　https://jp.api.pvp.net/api/lol/jp/v2.5/league/by-summoner/6346544/entry?api_key=d21e7e82-9bf6-4d9f-896d-c1e806ae8a0c
+        //masterとchallengerの人のbuildとかまとめる。lolkingみたいに
 
         $summonerIds = array_merge(array_keys($match[100]), array_keys($match[200]));
         $championIds = array_merge($match[100], $match[200]);
@@ -46,7 +48,7 @@ class IndexController extends Controller
 
     public function getSearch()
     {
-        return view('login');
+        return view('search');
     }
 
     public function postSearch()
@@ -72,7 +74,15 @@ class IndexController extends Controller
         }
         $stats = $this->riot->getMatchStats($id);
 
-        $summoners = $this->summoner->select('summoner_id', 'name')->lists('name', 'summoner_id')->toArray();
+        if ($stats === false) {
+            return redirect('search')
+                ->withErrors('api limit over')
+                ->withInput();
+        }
+
+        $summoners = $this->summoner->select('summoner_id', 'name')
+            ->where('summoner_id', $id)
+            ->lists('name', 'summoner_id')->toArray();
         $champions = $this->champion->select('champion_id', 'name')->lists('name', 'champion_id')->toArray();
         $champions[0] = '合計';
 

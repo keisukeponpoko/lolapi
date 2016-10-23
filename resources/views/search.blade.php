@@ -10,7 +10,7 @@
             <div class="panel-body">
                 @if (count($errors) > 0)
                     <div class="alert alert-danger">
-                        no Summoner Name
+                        {{ $errors->all()[0] }}
                     </div>
                 @endif
 
